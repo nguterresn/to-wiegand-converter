@@ -1,0 +1,13 @@
+
+update.py
+.DS_Store
+firmware/.vscode
+firmware/.pio
+firmware/.travis.yml
+firmware/.DS_Store
+firmware/.desktopini
+pcb/.DS_Store
+stl/.DS_Store
+docs/.DS_Store
+.desktopini
+            
