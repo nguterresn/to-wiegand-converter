@@ -17,6 +17,7 @@ class Buffer {
     void Reset(int size);
     void Delete();
     uint8_t* Get();
+    uint8_t Length();
 };
 
 #endif

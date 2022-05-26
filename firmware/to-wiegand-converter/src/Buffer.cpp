@@ -48,3 +48,7 @@ void Buffer::Delete() { free(data); }
 uint8_t* Buffer::Get() {
   return data;
 }
+
+uint8_t Buffer::Length() {
+  return index;
+}

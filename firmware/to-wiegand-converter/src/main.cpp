@@ -2,26 +2,30 @@
 #include "WebServer.h"
 #include "Buffer.h"
 #include "Wiegand.h"
+#include "Timeout.h"
 
 #define BUILT_IN_LED_PIN    2
 #define BUFFER_SIZE         100
 #define READING_TIMEOUT     10000
+#define IDENTIFICATION_TIMEOUT     2000
 
-enum FORMAT {
-  BINARY,
-  HEXDECIMAL,
-  DECIMAL,
-  ASCII
+enum STATE {
+  WAITING,
+  IDENTIFICATION,
+  PARSE,
+  REPLICATE,
+  RECOVER
 };
 
+uint8_t state = WAITING;
 Buffer buffer(&Serial);
-uint8_t numberOfReadings = 0;
 unsigned long lastReadAttempt = 0;
 
-bool _hasTimeout(unsigned long lastReadAttempt, unsigned long timeout);
-void _getWiegandPayload();
-void _readByteAndSave();
-void _resetBuffer();
+void _identify();
+void _parse();
+void _recover();
+void _read();
+void _waitAndRead();
 
 void setup() {
   // put your setup code here, to run once:
@@ -31,35 +35,65 @@ void setup() {
 }
 
 void loop() {
-  // If it is first time reading... store the time.
-  if (Serial.available() > 0) {
-    _readByteAndSave();
-    if (numberOfReadings == WIEGAND_FORMAT_DEFAULT) { _getWiegandPayload(); }
+  switch (state) {
+    case WAITING:
+      _waitAndRead();
+      break;
+    case IDENTIFICATION:
+      _identify();
+      break;
+    case PARSE:
+      _parse();
+      break;
+    case REPLICATE:
+      break;
+    case RECOVER:
+      _recover();
+      break;
+
+    default:
+      exit(0);
+      break;
   }
-  if (_hasTimeout(lastReadAttempt, READING_TIMEOUT)) {
-    _resetBuffer();
+  // Global timeout.
+  if (hasExceedTimeout(lastReadAttempt, READING_TIMEOUT) && buffer.Length()) {
+    Serial.println("recover");
+    state = RECOVER;
   }
 }
 
-void _readByteAndSave() {
+void _waitAndRead() {
+  if (Serial.available() > 0) {
+    _read();
+    // Check if the program is ready to jump to the evalutation state.
+    if (isReadyToIdentify(buffer.Length())) { state = IDENTIFICATION; }
+  }
+}
+
+void _read() {
   lastReadAttempt = millis();
   buffer.Add(Serial.read());
-  ++numberOfReadings;
 }
 
-void _getWiegandPayload() {
-  // Parse the reading result.
-  Serial.println("Parse it");
-  PrintWiegand(buffer.Get(), numberOfReadings, &Serial);
-  _resetBuffer();
+void _identify() {
+  if (Serial.available() > 0) {
+    _read();
+    return;
+  }
+  state = PARSE;
 }
 
-bool _hasTimeout(unsigned long lastReadAttempt, unsigned long timeout) {
-  return numberOfReadings && (millis() - lastReadAttempt > timeout);
+void _parse() {
+  parse(buffer.Get(), buffer.Length(), &Serial);
+  printWiegand(buffer.Get(), buffer.Length(), &Serial);
+  state = RECOVER;
 }
 
-void _resetBuffer() {
+void _recover() {
+  // Free buffer. Create a new one to store a new reading.
   buffer.Reset(BUFFER_SIZE);
-  numberOfReadings = 0;
+  // Clear the global variables.
   lastReadAttempt = 0;
+  // Jump to the beginning.
+  state = WAITING;
 }
