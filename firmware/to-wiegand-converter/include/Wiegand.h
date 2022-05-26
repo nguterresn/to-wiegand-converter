@@ -31,6 +31,7 @@ void printWiegand(uint8_t *data, uint8_t format, Stream *serial);
 // void identifyFormat(uint8_t length);
 bool supportedFormat(uint8_t length);
 void parse(uint8_t *data, uint8_t length, Stream *serial);
+void removeParityBits(uint8_t *data, uint8_t *length, Stream *serial);
 bool isReadyToIdentify(uint8_t counter);
 
 #endif

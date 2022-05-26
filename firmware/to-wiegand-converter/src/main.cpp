@@ -85,7 +85,6 @@ void _identify() {
 
 void _parse() {
   parse(buffer.Get(), buffer.Length(), &Serial);
-  printWiegand(buffer.Get(), buffer.Length(), &Serial);
   state = RECOVER;
 }
 
