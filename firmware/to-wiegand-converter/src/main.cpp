@@ -28,7 +28,7 @@ void setup() {
   Serial.println("Wemos D1 Mini Booting... !");
   buffer.Create(BUFFER_SIZE);
   setWifi();
-  setWebServer();
+  setWebServer(cardType);
 }
 
 void loop() {

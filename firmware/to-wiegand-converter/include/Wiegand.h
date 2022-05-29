@@ -22,16 +22,28 @@ enum WIEGAND_LENGTH {
   BIT_44
 };
 
-enum WIEGAND_ARRAY {
-  START,
-  END
+enum CARD_TYPE {
+  HID_BIT_26
 };
 
-void printWiegand(uint8_t *data, uint8_t format, Stream *serial);
-// void identifyFormat(uint8_t length);
+// Default card type.
+extern uint8_t cardType;
+// Wiegand Supported Formats.
+const uint8_t wiegandFormats[5] = { 26, 32, 34, 40, 44 };
+// FORMAT ARRAY
+// [ [0, 0], [1, 8], [9, 24], [25, 25] ]
+// Support Only HID 26-bit for now.
+const uint8_t wiegand[1][4][2] = {
+  {
+    { 0, 0 }, { 1, 8 }, { 9, 24 }, { 25, 25 }
+  }
+};
+
+bool isReadyToIdentify(uint8_t counter);
 bool supportedFormat(uint8_t length);
 void parse(uint8_t *data, uint8_t length, Stream *serial);
+void parseCardData(uint8_t *data, uint8_t length, Stream *serial);
+void printWiegand(uint8_t *data, uint8_t format, Stream *serial);
 void removeParityBits(uint8_t *data, uint8_t *length, Stream *serial);
-bool isReadyToIdentify(uint8_t counter);
 
 #endif

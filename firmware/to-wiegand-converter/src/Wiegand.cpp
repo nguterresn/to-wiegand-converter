@@ -1,15 +1,7 @@
 #include "Wiegand.h"
 
-// FORMAT ARRAY
-// [ [0, 0], [1, 8], [9, 24], [25, 25] ]
-// Support Only HID 26-bit for now.
-uint8_t wiegand[1][4][2] = {
-  {
-    { 0, 0 }, { 1, 8 }, { 9, 24 }, { 25, 25 }
-  }
-};
-
-uint8_t wiegandFormats[5] = { 26, 32, 34, 40, 44 };
+// Default card type.
+uint8_t cardType = HID_BIT_26;
 
 void parse(uint8_t *data, uint8_t length, Stream *serial) {
   // Validate format.
@@ -19,6 +11,12 @@ void parse(uint8_t *data, uint8_t length, Stream *serial) {
   removeParityBits(data, &length, serial);
   printWiegand(data, length, serial);
   // Parse FC and CN.
+  parseCardData(data, length, serial);
+}
+
+void parseCardData(uint8_t *data, uint8_t length, Stream *serial) {
+  // Do a client request.
+  
 }
 
 bool supportedFormat(uint8_t length) {
