@@ -4,9 +4,10 @@
 #include <Arduino.h>
 #include <ESPAsyncWebServer.h>
 #include <ESP8266mDNS.h>
+#include "HTML.h"
 
 #define SSID_OF_THE_NETWORK "NameOfTheNetwork"
-#define DNS_NETWORK_NAME "esp8266"
+#define DNS_NETWORK_NAME    "esp8266"
 
 void setWifi();
 void setWebServer();

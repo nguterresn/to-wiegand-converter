@@ -1,13 +1,8 @@
 #include <Arduino.h>
-#include "WebServer.h"
 #include "Buffer.h"
-#include "Wiegand.h"
 #include "Timeout.h"
-
-#define BUILT_IN_LED_PIN    2
-#define BUFFER_SIZE         100
-#define READING_TIMEOUT     10000
-#define IDENTIFICATION_TIMEOUT     2000
+#include "WebServer.h"
+#include "Wiegand.h"
 
 enum STATE {
   WAITING,
@@ -32,6 +27,8 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Wemos D1 Mini Booting... !");
   buffer.Create(BUFFER_SIZE);
+  setWifi();
+  setWebServer();
 }
 
 void loop() {
@@ -60,6 +57,8 @@ void loop() {
     Serial.println("recover");
     state = RECOVER;
   }
+  // Necessary to update dns
+  MDNS.update();
 }
 
 void _waitAndRead() {

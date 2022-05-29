@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 
+#define BUFFER_SIZE         100
+
 class Buffer {
   private:
     uint8_t *data;

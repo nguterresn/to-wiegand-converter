@@ -3,17 +3,17 @@
 AsyncWebServer server(80);
 
 void setWifi() {
-  // WiFi.softAP(SSID_OF_THE_NETWORK);
-  // // Start mDNS with name esp8266
-  // MDNS.begin("esp8266");
-  // MDNS.addService("http", DNS_NETWORK_NAME, 80);
+  WiFi.softAP(SSID_OF_THE_NETWORK);
+  // Start mDNS with name esp8266
+  MDNS.begin("esp8266");
+  MDNS.addService("http", DNS_NETWORK_NAME, 80);
 }
 
 void setWebServer() {
 
-  // server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-  //   request->send(200, "text/html", homePage);
-  // });
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(200, "text/html", homePage);
+  });
 
   // server.on("/close",  HTTP_GET, [](AsyncWebServerRequest *request){
   //   referenceState = CLOSE;
@@ -37,10 +37,10 @@ void setWebServer() {
   //   }
   // });
 
-  // server.onNotFound(notFound);
-  // server.begin();
+  server.onNotFound(notFound);
+  server.begin();
 }
 
 void notFound(AsyncWebServerRequest *request) {
-  // request->send(404, "text/plain", "Not found");
+  request->send(404, "text/plain", "Not found");
 }
