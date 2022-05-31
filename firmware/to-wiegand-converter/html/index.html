@@ -88,8 +88,8 @@
     <div class="row">
       <div class="seven columns">
         <select class="u-full-width" id="card_select">
-          <option value="volvo"><p>HID-26bit</p></option>
-          <option value="saab">XXXX</option>
+          <option><p>HID-26bit</p></option>
+          <option><p>HID-26Bit no facility</p></option>
         </select>
       </div>
       <div class="five columns">
@@ -163,24 +163,16 @@
         console.log("Events Connected");
       }, false);
 
-      source.addEventListener('card_type', function(e) {
-        consoleLog.innerHTML = e.data;
-        console.log("card_type", e.data);
-      }, false);
-
-      source.addEventListener('facility_code', function(e) {
-        consoleLog.innerHTML = "facility_code";
-        console.log("facility_code", e.data);
-      }, false);
-
       source.addEventListener('card_number', function(e) {
-        consoleLog.innerHTML = "card_number";
+        var cardNumberText = document.getElementById("table_cn");
+        cardNumberText.innerText = e.data;
         console.log("card_number", e.data);
       }, false);
 
-      source.addEventListener('format', function(e) {
-        consoleLog.innerHTML = "format";
-        console.log("format", e.data);
+      source.addEventListener('card_facility', function(e) {
+        var facilityCodeText = document.getElementById("table_fc");
+        facilityCodeText.innerText = e.data;
+        console.log("card_facility", e.data);
       }, false);
     }
   }

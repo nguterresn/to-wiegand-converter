@@ -30,7 +30,7 @@ void setWebServer(uint8_t &cardType) {
 }
 
 void sendEvent(const char* type, const char* data) {
-  events.send(data, "myevent", millis());
+  events.send(data, type, millis());
 }
 
 void notFound(AsyncWebServerRequest *request) {

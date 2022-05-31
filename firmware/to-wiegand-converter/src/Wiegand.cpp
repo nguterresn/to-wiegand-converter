@@ -2,6 +2,8 @@
 
 // Default card type.
 uint8_t cardType = HID_BIT_26;
+int facilityCode = 0;
+int cardNumber = 0;
 
 void parse(uint8_t *data, uint8_t length, Stream *serial) {
   // Validate format.
@@ -15,8 +17,29 @@ void parse(uint8_t *data, uint8_t length, Stream *serial) {
 }
 
 void parseCardData(uint8_t *data, uint8_t length, Stream *serial) {
-  // Do a client request.
-  
+  facilityCode = 0;
+  cardNumber = 0;
+  // facilityCodeEndIndex is handy when there is no facility code. We can set
+  // the array as {15, 15}, so the card number is on the next index (16).
+  uint8_t facilityCodeEndIndex = wiegand[cardType][FACILITY_CODE][1];
+  uint8_t facilityCodeLength =
+    facilityCodeEndIndex - wiegand[cardType][FACILITY_CODE][0];
+  uint8_t cardNumberLength =
+    wiegand[cardType][CARD_NUMBER][1] - wiegand[cardType][CARD_NUMBER][0];
+  for (int8 i = facilityCodeLength; i > 0; i--) {
+    // Subtrate 48 to convert from decimal to binary.
+    // This might change in the future.
+    facilityCode += (*(data + (facilityCodeLength - i)) - 48) << i;
+  }
+  for (int8 i = cardNumberLength; i > 0; i--) {
+    cardNumber +=
+      (*(data + (cardNumberLength + (facilityCodeEndIndex + 1) - i)) - 48) << i;
+  }
+  // Prepare to send an event.
+  char *buffer = new char[40];
+  sendEvent("card_facility", intToConstChar(facilityCode, buffer));
+  sendEvent("card_number", intToConstChar(cardNumber, buffer));
+  delete []buffer;
 }
 
 bool supportedFormat(uint8_t length) {

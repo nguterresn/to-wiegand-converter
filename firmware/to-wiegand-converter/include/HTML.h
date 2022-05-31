@@ -167,12 +167,18 @@ const char homePage[] PROGMEM = R"rawliteral(
 
       source.addEventListener('open', function(e) {
         console.log("Events Connected");
-        consoleLog.innerHTML = "Events Connected";
       }, false);
 
-      source.addEventListener('myevent', function(e) {
-        consoleLog.innerHTML = e.data;
-        console.log("myevent", e.data);
+      source.addEventListener('card_number', function(e) {
+        var cardNumberText = document.getElementById("table_cn");
+        cardNumberText.innerText = e.data;
+        console.log("card_number", e.data);
+      }, false);
+
+      source.addEventListener('card_facility', function(e) {
+        var facilityCodeText = document.getElementById("table_fc");
+        facilityCodeText.innerText = e.data;
+        console.log("card_facility", e.data);
       }, false);
     }
   }
