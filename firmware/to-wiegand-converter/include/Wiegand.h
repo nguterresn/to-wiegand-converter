@@ -22,19 +22,29 @@ const uint8_t wiegandFormats[5] = { 26, 32, 34, 40, 44 };
 
 enum WIEGAND_FORMAT {
   FACILITY_CODE,
-  CARD_NUMBER
+  CARD_NUMBER,
+  MIN_LENGTH
 };
 
 enum CARD_TYPE {
   HID_BIT_26,
   HID_BIT_26_NO_FC,
+  HID_BIT_34,
+  EM4100,
+  TK4100
 };
 
+// Facility Coode + Card Number without Parity Bits.
 // [ [1, 8], [9, 24] ]
-// Support Only HID 26-bit for now.
-const uint8_t wiegand[2][2][2] = {
-  {{ 1, 8 }, { 9, 24 }},
-  {{ 8, 8 }, { 9, 24 }}
+// First index - enum CARD_TYPE length
+// Second index - enum WIEGAND_FORMAT length
+// Third index - start and end index
+const uint8_t wiegand[5][3][2] = {
+  {{ 0, 7 }, { 8, 23 }, { 26 }},
+  {{ 7, 7 }, { 8, 23 }, { 26 }},
+  {{ 0, 15 }, { 16, 31 }, { 34 }},
+  {{ 0, 15 }, { 16, 31 }, { 32 }},
+  {{ 0, 15 }, { 16, 31 }, { 32 }}
 };
 
 // Default card type.

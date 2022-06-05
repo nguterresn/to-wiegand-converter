@@ -3,6 +3,10 @@
 
 #include <Arduino.h>
 
+#define CARD_FACILITY_EVENT "card_facility"
+#define CARD_NUMBER_EVENT "card_number"
+#define CARD_FORMAT_EVENT "card_format"
+
 const char homePage[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML>
 <html>
@@ -94,13 +98,12 @@ const char homePage[] PROGMEM = R"rawliteral(
     <div class="row">
       <div class="seven columns">
         <select class="u-full-width" id="card_select">
-          <option value="volvo"><p>HID-26bit</p></option>
-          <option value="saab">XXXX</option>
+          <option><p>HID-26bit</p></option>
+          <option><p>HID-26Bit no facility</p></option>
+          <option><p>HID-34bit</p></option>
+          <option><p>EM4100</p></option>
+          <option><p>TK4100</p></option>
         </select>
-      </div>
-      <div class="five columns">
-        <!-- add in-line button  -->
-        <button class="button-primary" type="button" id="save_button">Save</button>
       </div>
     </div>
     <hr>
@@ -140,17 +143,20 @@ const char homePage[] PROGMEM = R"rawliteral(
 
 <script>
   window.onload = function () {
-    const saveButton = document.getElementById('save_button');
+    const cardTypeSelect = document.getElementById('card_select');
+    var cardTypeText = document.getElementById("table_card_type");
     var consoleLog = document.getElementById("console");
 
-    saveButton.addEventListener('click', function() {
-      var cardTypeIndex = document.getElementById("card_select").selectedIndex;
+    cardTypeSelect.addEventListener('change', function(e) {
+      var cardTypeIndex = e.target.selectedIndex;
+      var cardTypeValue = e.target.value;
       // create an XHR object
       const xhr = new XMLHttpRequest();
       xhr.onload = () => {
         // process response
         if (xhr.status == 200) {
           consoleLog.innerHTML = cardTypeIndex;
+          cardTypeText.innerText = cardTypeValue;
         } else {
           consoleLog.innerText = "404";
         }
@@ -179,6 +185,12 @@ const char homePage[] PROGMEM = R"rawliteral(
         var facilityCodeText = document.getElementById("table_fc");
         facilityCodeText.innerText = e.data;
         console.log("card_facility", e.data);
+      }, false);
+
+      source.addEventListener('card_format', function(e) {
+        var cardFormatText = document.getElementById("table_format");
+        cardFormatText.innerText = "Wiegand " + e.data + "-bit";
+        console.log("card_format", e.data);
       }, false);
     }
   }
