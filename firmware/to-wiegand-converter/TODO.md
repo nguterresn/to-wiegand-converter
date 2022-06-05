@@ -1,0 +1,6 @@
+- [ ] Limit length from [0, 2]. A HID 26-bit card will never have a 32 bit length payload.
+- [ ] Build error alert in the page.
+- [ ] Support Wiegand Replay.
+- [ ] Support 40 and 44 bits cards.
+- [ ] Support decimal integer from RS485, of multiple formats.
+- [ ] Support Wiegand Input (d0/d1).
