@@ -3,6 +3,7 @@
 #include "Timeout.h"
 #include "WebServer.h"
 #include "Wiegand.h"
+#include "Replay.h"
 
 enum STATE {
   WAITING,
@@ -30,6 +31,7 @@ void setup() {
   buffer.create(BUFFER_SIZE);
   setWifi();
   setWebServer(cardType);
+  io();
 }
 
 void loop() {
@@ -89,6 +91,7 @@ void _parse() {
 }
 
 void _replicate() {
+  _replay(buffer.get(), buffer.length());
   state = RECOVER;
 }
 
