@@ -5,6 +5,7 @@
 #include <ESPAsyncWebServer.h>
 #include <ESP8266mDNS.h>
 #include "HTML.h"
+#include "Helper.h"
 
 #define SSID_OF_THE_NETWORK "NameOfTheNetwork"
 #define DNS_NETWORK_NAME    "esp8266"
@@ -13,7 +14,7 @@
 
 void notFound(AsyncWebServerRequest *request);
 void setWebServer(uint8_t &cardType);
-void sendEvent(const char* type, const char* data);
+void sendEvent(const char* type, int value);
 void setWifi();
 void updatePage();
 

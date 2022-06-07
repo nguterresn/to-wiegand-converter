@@ -18,15 +18,16 @@ unsigned long lastReadAttempt = 0;
 
 void _identify();
 void _parse();
-void _recover();
 void _read();
+void _recover();
+void _replicate();
 void _waitAndRead();
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   Serial.println("Wemos D1 Mini Booting... !");
-  buffer.Create(BUFFER_SIZE);
+  buffer.create(BUFFER_SIZE);
   setWifi();
   setWebServer(cardType);
 }
@@ -43,6 +44,7 @@ void loop() {
       _parse();
       break;
     case REPLICATE:
+      _replicate();
       break;
     case RECOVER:
       _recover();
@@ -53,8 +55,7 @@ void loop() {
       break;
   }
   // Global timeout.
-  if (hasExceedTimeout(lastReadAttempt, READING_TIMEOUT) && buffer.Length()) {
-    Serial.println("recover");
+  if (hasExceedTimeout(lastReadAttempt, READING_TIMEOUT) && buffer.length()) {
     state = RECOVER;
   }
   // Necessary to update dns
@@ -65,13 +66,13 @@ void _waitAndRead() {
   if (Serial.available() > 0) {
     _read();
     // Check if the program is ready to jump to the evalutation state.
-    if (isReadyToIdentify(buffer.Length())) { state = IDENTIFICATION; }
+    if (isReadyToIdentify(buffer.length())) { state = IDENTIFICATION; }
   }
 }
 
 void _read() {
   lastReadAttempt = millis();
-  buffer.Add(Serial.read());
+  buffer.add(Serial.read());
 }
 
 void _identify() {
@@ -83,13 +84,17 @@ void _identify() {
 }
 
 void _parse() {
-  parse(buffer.Get(), buffer.Length(), &Serial);
+  int error = parse(buffer.get(), buffer.length(), &Serial);
+  state = error ? RECOVER : REPLICATE;
+}
+
+void _replicate() {
   state = RECOVER;
 }
 
 void _recover() {
   // Free buffer. Create a new one to store a new reading.
-  buffer.Reset(BUFFER_SIZE);
+  buffer.reset(BUFFER_SIZE);
   // Clear the global variables.
   lastReadAttempt = 0;
   // Jump to the beginning.

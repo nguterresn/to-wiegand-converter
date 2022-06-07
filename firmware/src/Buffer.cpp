@@ -4,7 +4,7 @@ Buffer::Buffer(Stream *serial) {
   this->serial = serial;
 };
 
-void Buffer::Create(int size) {
+void Buffer::create(int size) {
   // Allocate first chunk of memory for this array.
   data = (uint8_t *) calloc(size, sizeof(uint8_t));
   if (data == NULL) {
@@ -18,7 +18,7 @@ void Buffer::Create(int size) {
   serial->println(" bytes for `data` array");
 }
 
-void Buffer::Add(uint8_t value) {
+void Buffer::add(uint8_t value) {
   if (data == NULL) {
     serial->println("Unable to find allocated memory for `data` array");
     return;
@@ -38,17 +38,17 @@ void Buffer::Add(uint8_t value) {
   serial->println(value);
 };
 
-void Buffer::Reset(int size) {
-  this->Delete();
-  this->Create(size);
+void Buffer::reset(int size) {
+  this->clear();
+  this->create(size);
 }
 
-void Buffer::Delete() { free(data); }
+void Buffer::clear() { free(data); }
 
-uint8_t* Buffer::Get() {
+uint8_t* Buffer::get() {
   return data;
 }
 
-uint8_t Buffer::Length() {
+uint8_t Buffer::length() {
   return index;
 }

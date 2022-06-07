@@ -14,12 +14,12 @@ class Buffer {
 
   public:
     Buffer(Stream *serial);
-    void Create(int size);
-    void Add(uint8_t value);
-    void Reset(int size);
-    void Delete();
-    uint8_t* Get();
-    uint8_t Length();
+    void create(int size);
+    void add(uint8_t value);
+    void reset(int size);
+    void clear();
+    uint8_t* get();
+    uint8_t length();
 };
 
 #endif

@@ -33,6 +33,9 @@ void notFound(AsyncWebServerRequest *request) {
   request->send(404, "text/plain", "Not found");
 }
 
-void sendEvent(const char* type, const char* data) {
-  events.send(data, type, millis());
+void sendEvent(const char* type, int value) {
+  char *buffer = new char[50];
+  intToConstChar(value, buffer);
+  events.send(buffer, type, millis());
+  delete []buffer;
 }
