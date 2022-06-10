@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <title>ESP Web Server</title>
+  <title>to Wiegand converter</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     /* Skeleton framework */
@@ -96,6 +96,14 @@
         </select>
       </div>
     </div>
+    <div class="row">
+      <div class="seven columns">
+        <select class="u-full-width" id="data_format_select">
+          <option><p>ASCII</p></option>
+          <option><p>Binary</p></option>
+        </select>
+      </div>
+    </div>
     <hr>
     <div class="row">
       <table class="u-full-width">
@@ -134,6 +142,7 @@
 <script>
   window.onload = function () {
     const cardTypeSelect = document.getElementById('card_select');
+    const dataTypeSelect = document.getElementById('data_format_select');
     var cardTypeText = document.getElementById("table_card_type");
     var consoleLog = document.getElementById("console");
 
@@ -154,6 +163,26 @@
       xhr.onerror = () => { consoleLog.innerText = "Error on XML request!"; }
       // create a `GET` request
       xhr.open('GET', "/save?type=" + cardTypeIndex, true);
+      // send request
+      xhr.send();
+    });
+
+    dataTypeSelect.addEventListener('change', function(e) {
+      var dataTypeIndex = e.target.selectedIndex;
+      var dataTypeValue = e.target.value;
+      // create an XHR object
+      const xhr = new XMLHttpRequest();
+      xhr.onload = () => {
+        // process response
+        if (xhr.status == 200) {
+          consoleLog.innerHTML = dataTypeValue;
+        } else {
+          consoleLog.innerText = "404";
+        }
+      };
+      xhr.onerror = () => { consoleLog.innerText = "Error on XML request!"; }
+      // create a `GET` request
+      xhr.open('GET', "/format?type=" + dataTypeIndex, true);
       // send request
       xhr.send();
     });
