@@ -7,21 +7,23 @@ int cardNumber = 0;
 
 int parse(uint8_t *data, uint8_t length, Stream *serial) {
   // Validate format.
-  if (!supportedFormat(length)) {
+  if (!_supportedFormat(length)) {
     sendEvent(CARD_FACILITY_EVENT, 0);
     sendEvent(CARD_NUMBER_EVENT, 0);
     sendEvent(CARD_FORMAT_EVENT, 0);
     return ERROR;
   }
   // Take off parity bits.
-  removeParityBits(data, &length, serial);
-  printWiegand(data, length, serial);
+  _removeParityBits(data, &length, serial);
+  #ifdef DEBUG
+  _printWiegand(data, length, serial);
+  #endif
   // Parse FC and CN.
-  parseCardData(data, length, serial);
+  _parseCardData(data, length, serial);
   return SUCCESS;
 }
 
-void parseCardData(uint8_t *data, uint8_t length, Stream *serial) {
+void _parseCardData(uint8_t *data, uint8_t length, Stream *serial) {
   facilityCode = 0;
   cardNumber = 0;
   // facilityCodeEndIndex is handy when there is no facility code. We can set
@@ -43,27 +45,27 @@ void parseCardData(uint8_t *data, uint8_t length, Stream *serial) {
   sendEvent(CARD_NUMBER_EVENT, cardNumber);
 }
 
-bool supportedFormat(uint8_t length) {
+bool _supportedFormat(uint8_t length) {
+  if (length < card[cardType][MIN_LENGTH][0]) { return false; }
   for (uint8_t i = 0; i < sizeof(wiegandFormats); i++) {
-    if (
-      wiegandFormats[i] == length &&
-      length >= card[cardType][MIN_LENGTH][0]
-    ) {
+    if (wiegandFormats[i] == length) {
       return true;
     }
   }
   return false;
 }
 
-void printWiegand(uint8_t *data, uint8_t format, Stream *serial) {
+#ifdef DEBUG
+void _printWiegand(uint8_t *data, uint8_t format, Stream *serial) {
   String _data = "";
   for (size_t i = 0; i < format; i++) {
     _data += (char) *(data + i);
   }
   serial->println(_data);
 }
+#endif
 
-void removeParityBits(uint8_t *data, uint8_t *length, Stream *serial) {
+void _removeParityBits(uint8_t *data, uint8_t *length, Stream *serial) {
   // Update Wiegand format on Web page.
   sendEvent(CARD_FORMAT_EVENT, *length);
   // Data & Length are both passed by reference.

@@ -5,6 +5,8 @@
 #include "Wiegand.h"
 #include "Replay.h"
 
+#define DEBUG 1
+
 enum STATE {
   WAITING,
   IDENTIFICATION,
@@ -25,9 +27,7 @@ void _replicate();
 void _waitAndRead();
 
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(9600);
-  Serial.println("Wemos D1 Mini Booting... !");
   buffer.create(BUFFER_SIZE);
   setWifi();
   setWebServer(cardType);
@@ -91,7 +91,7 @@ void _parse() {
 }
 
 void _replicate() {
-  _replay(buffer.get(), buffer.length());
+  replay(buffer.get(), buffer.length());
   state = RECOVER;
 }
 

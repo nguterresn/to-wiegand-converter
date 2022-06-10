@@ -43,11 +43,11 @@ extern int facilityCode;
 // Default card number.
 extern int cardNumber;
 
+bool _supportedFormat(uint8_t length);
 bool isReadyToIdentify(uint8_t counter);
-bool supportedFormat(uint8_t length);
 int parse(uint8_t *data, uint8_t length, Stream *serial);
-void parseCardData(uint8_t *data, uint8_t length, Stream *serial);
-void printWiegand(uint8_t *data, uint8_t format, Stream *serial);
-void removeParityBits(uint8_t *data, uint8_t *length, Stream *serial);
+void _parseCardData(uint8_t *data, uint8_t length, Stream *serial);
+void _printWiegand(uint8_t *data, uint8_t format, Stream *serial);
+void _removeParityBits(uint8_t *data, uint8_t *length, Stream *serial);
 
 #endif
