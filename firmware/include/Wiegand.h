@@ -4,7 +4,8 @@
 #include <Arduino.h>
 #include "WebServer.h"
 
-#define WIEGAND_FORMAT_DEFAULT  26
+#define WIEGAND_FORMAT_DEFAULT_ASCII    26
+#define WIEGAND_FORMAT_DEFAULT_BINARY   4
 
 // Wiegand Supported Formats.
 enum WIEGAND_LENGTH { BIT_26, BIT_32, BIT_34, BIT_40, BIT_44 };
@@ -24,6 +25,11 @@ enum CARD_TYPE {
   TK4100
 };
 
+enum DATA_TYPE {
+  ASCII,
+  BINARY
+};
+
 // Facility Coode + Card Number without Parity Bits.
 // First index - enum CARD_TYPE length
 // Second index - enum WIEGAND_FORMAT length
@@ -36,12 +42,9 @@ const uint8_t card[5][3][2] = {
   {{ 0, 15 }, { 16, 31 }, { 32 }}
 };
 
-// Default card type.
+// Mutable variables externally (from the web)
 extern uint8_t cardType;
-// Default facility code.
-extern int facilityCode;
-// Default card number.
-extern int cardNumber;
+extern uint8_t dataType;
 
 bool _supportedFormat(uint8_t length);
 bool isReadyToIdentify(uint8_t counter);
@@ -49,5 +52,6 @@ int parse(uint8_t *data, uint8_t length, Stream *serial);
 void _parseCardData(uint8_t *data, uint8_t length, Stream *serial);
 void _printWiegand(uint8_t *data, uint8_t format, Stream *serial);
 void _removeParityBits(uint8_t *data, uint8_t *length, Stream *serial);
+void _transformData(uint8_t *data, uint8_t length, Stream *serial);
 
 #endif

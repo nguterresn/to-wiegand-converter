@@ -2,10 +2,11 @@
 
 // Default card type.
 uint8_t cardType = HID_BIT_26;
-int facilityCode = 0;
-int cardNumber = 0;
+// Default data type.
+uint8_t dataType = ASCII;
 
 int parse(uint8_t *data, uint8_t length, Stream *serial) {
+  _transformData(data, length, serial);
   // Validate format.
   if (!_supportedFormat(length)) {
     sendEvent(CARD_FACILITY_EVENT, 0);
@@ -24,8 +25,8 @@ int parse(uint8_t *data, uint8_t length, Stream *serial) {
 }
 
 void _parseCardData(uint8_t *data, uint8_t length, Stream *serial) {
-  facilityCode = 0;
-  cardNumber = 0;
+  int facilityCode = 0;
+  int cardNumber = 0;
   // facilityCodeEndIndex is handy when there is no facility code. We can set
   // the array as {15, 15}, so the card number is on the next index (16).
   uint8_t facilityCodeStartIndex = card[cardType][FACILITY_CODE][0];
@@ -55,16 +56,6 @@ bool _supportedFormat(uint8_t length) {
   return false;
 }
 
-#ifdef DEBUG
-void _printWiegand(uint8_t *data, uint8_t format, Stream *serial) {
-  String _data = "";
-  for (size_t i = 0; i < format; i++) {
-    _data += (char) *(data + i);
-  }
-  serial->println(_data);
-}
-#endif
-
 void _removeParityBits(uint8_t *data, uint8_t *length, Stream *serial) {
   // Update Wiegand format on Web page.
   sendEvent(CARD_FORMAT_EVENT, *length);
@@ -82,6 +73,26 @@ void _removeParityBits(uint8_t *data, uint8_t *length, Stream *serial) {
   }
 }
 
-bool isReadyToIdentify(uint8_t counter) {
-  return (counter == WIEGAND_FORMAT_DEFAULT);
+void _transformData(uint8_t *data, uint8_t length, Stream *serial) {
+  
 }
+
+bool isReadyToIdentify(uint8_t counter) {
+  if (dataType == ASCII) {
+    return (counter == WIEGAND_FORMAT_DEFAULT_ASCII);
+  }
+  if (dataType == BINARY) {
+    return (counter == WIEGAND_FORMAT_DEFAULT_BINARY);
+  }
+  return false;
+}
+
+#ifdef DEBUG
+void _printWiegand(uint8_t *data, uint8_t format, Stream *serial) {
+  String _data = "";
+  for (size_t i = 0; i < format; i++) {
+    _data += (char) *(data + i);
+  }
+  serial->println(_data);
+}
+#endif

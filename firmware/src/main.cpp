@@ -30,7 +30,7 @@ void setup() {
   Serial.begin(9600);
   buffer.create(BUFFER_SIZE);
   setWifi();
-  setWebServer(cardType);
+  setWebServer(cardType, dataType);
   io();
 }
 
